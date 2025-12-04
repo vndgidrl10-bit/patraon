@@ -305,13 +305,13 @@
   <section class="summary-grid">
 
     <div class="summary-box">
-      <span class="label">총 누적 수익 (NET)</span>
+      <span class="label">총 누적 수익 (USD)</span>
       <span class="value" id="totalNet">$0.00</span>
       <span class="sub">플랫폼 수수료 차감 후</span>
     </div>
 
     <div class="summary-box">
-      <span class="label">이번 달 수익</span>
+      <span class="label">이번 달 수익(USD)</span>
       <span class="value" id="monthlyNet">$0.00</span>
       <span class="sub">이번 달 1일 ~ 오늘</span>
     </div>
@@ -462,22 +462,26 @@
     pendingNetEl.textContent = formatMoney(pendingNet);
   }
 
-  // 랜덤 수익 증가 (30초마다)
-  function tickRandomRevenue() {
-    const idx = Math.floor(Math.random() * videos.length);
-    const deltaBuyers = Math.floor(Math.random() * 5) + 1; // 1~5명 랜덤 추가
-    videos[idx].buyers += deltaBuyers;
-    renderRows();
-    updateSummary();
-  }
-
+  // 랜덤 수익 증가 (랜덤초마다[1~15])
+function tickRandomRevenue() {
+  const idx = Math.floor(Math.random() * videos.length);
+  const deltaBuyers = Math.floor(Math.random() * 8) + 1; // 1~8명
+  videos[idx].buyers += deltaBuyers;
   renderRows();
   updateSummary();
-  setInterval(tickRandomRevenue, 30000);
+
+  // 다음 실행 시간을 1~10초 랜덤 설정
+  const nextTime = Math.floor(Math.random() * 15000) + 1000;
+  setTimeout(tickRandomRevenue, nextTime);
+}
+
+// 최초 실행 트리거
+tickRandomRevenue();
 </script>
 
 </body>
 </html>
+
 
 
 
