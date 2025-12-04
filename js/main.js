@@ -1,13 +1,13 @@
-document.addEventListener('DOMContentLoaded', () => {
-  const menuBtn = document.querySelector('.menu-toggle');
-  const nav = document.querySelector('.main-nav');
+document.addEventListener("DOMContentLoaded", () => {
+  const mainVideo = document.getElementById("mainVideo");
+  const mainSource = document.getElementById("mainSource");
+  const mainTitle = document.getElementById("mainTitle");
+  const mainMeta = document.getElementById("mainMeta");
+  const mainDesc = document.getElementById("mainDesc");
+  const creatorName = document.getElementById("creatorName");
+  const creatorDesc = document.getElementById("creatorDesc");
 
-  if (menuBtn && nav) {
-    menuBtn.addEventListener('click', () => {
-      nav.classList.toggle('open');
-    });
-  }
-});
+  const items = document.querySelectorAll(".thumb-item");
   
 
   items.forEach(item => {
@@ -37,21 +37,14 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 });
 
-document.addEventListener("DOMContentLoaded", () => {
-  const menuBtn = document.querySelector(".menu-toggle");
-  const navLinks = document.querySelectorAll(".main-nav a");
+document.addEventListener('DOMContentLoaded', () => {
+  const menuBtn = document.querySelector('.menu-toggle');
+  const nav = document.querySelector('.main-nav');
 
-  if (menuBtn) {
-    menuBtn.addEventListener("click", () => {
-      document.body.classList.toggle("nav-open");
+  if (menuBtn && nav) {
+    menuBtn.addEventListener('click', () => {
+      nav.classList.toggle('open');
     });
   }
-
-  // 메뉴 항목 눌렀을 때 자동으로 닫히게 (선택 사항)
-  navLinks.forEach(link => {
-    link.addEventListener("click", () => {
-      document.body.classList.remove("nav-open");
-    });
-  });
-
 });
+
