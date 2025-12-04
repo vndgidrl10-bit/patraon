@@ -1,556 +1,480 @@
-/* 기본 리셋 */
-* {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-}
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>수익정산</title>
 
-body {
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-  background: #080808;
-  color: #f5f5f5;
-}
+  <!-- 기존 공통 스타일 -->
+  <link rel="stylesheet" href="./css/style.css">
 
-/* 상단 헤더 */
-.site-header {
-  position: sticky;
-  top: 0;
-  z-index: 50;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 10px 16px;
-  background: #050505;
-  border-bottom: 1px solid #222;
-}
+  <!-- 🔹 수익정산 페이지 + 모바일 전용 오버라이드 -->
+  <style>
+    /* ===== 공통 레이아웃 보정 ===== */
+    .revenue-page {
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: 24px 16px 40px;
+    }
 
-.menu-toggle {
-  display: none;              /* 기본은 숨김 (PC) */
-  background: none;
-  border: none;
-  color: #f5f5f5;
-  font-size: 20px;
-  cursor: pointer;
-  margin-left: auto;
-  margin-right: 10px;
-}
+    .revenue-page .page-title {
+      font-size: 26px;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
 
-.logo {
-  font-weight: 800;
-  font-size: 18px;
-  color: #ffcc33;
-}
+    .revenue-page .page-desc {
+      font-size: 14px;
+      color: rgba(255,255,255,0.7);
+      margin-bottom: 24px;
+    }
 
-.main-nav {
-  display: flex;
-  gap: 12px;
-  font-size: 14px;
-}
+    /* ===== 상단 요약 카드 ===== */
+    .summary-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 16px;
+      margin-bottom: 24px;
+    }
 
-.main-nav a {
-  color: #ccc;
-  text-decoration: none;
-}
+    .summary-box {
+      background: #090d1f;
+      border-radius: 14px;
+      padding: 14px 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+    }
 
-.main-nav a.active {
-  color: #ffcc33;
-}
+    .summary-box .label {
+      font-size: 12px;
+      color: rgba(255,255,255,0.6);
+    }
 
-.user-area {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  font-size: 12px;
-  color: #aaa;
-}
+    .summary-box .value {
+      font-size: 22px;
+      font-weight: 700;
+    }
 
-.avatar {
-  width: 28px;
-  height: 28px;
-  border-radius: 50%;
-  background: linear-gradient(135deg, #ffcc33, #ff7b33);
-}
+    .summary-box .sub {
+      font-size: 12px;
+      color: rgba(255,255,255,0.5);
+    }
 
-/* 페이지 기본 레이아웃: 한 줄 스크롤 */
-.page {
-  max-width: 960px;
-  margin: 0 auto;
-  padding: 16px;
-}
+    /* ===== 필터 바 ===== */
+    .filter-bar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+      background: #050814;
+      border-radius: 12px;
+      padding: 10px 12px;
+      margin-bottom: 16px;
+    }
 
-/* 텍스트들 */
-.bread {
-  font-size: 12px;
-  color: #888;
-  margin-bottom: 6px;
-}
+    .filter-bar input[type="date"],
+    .filter-bar input[type="text"],
+    .filter-bar select {
+      background: #0b1020;
+      color: #fff;
+      border-radius: 8px;
+      border: 1px solid rgba(255,255,255,0.1);
+      padding: 6px 8px;
+      font-size: 13px;
+    }
 
-.page-title {
-  font-size: 22px;
-  font-weight: 700;
-  margin-bottom: 10px;
-}
+    .filter-bar .btn-reset,
+    .filter-bar .btn-export {
+      border: none;
+      border-radius: 8px;
+      padding: 6px 10px;
+      font-size: 13px;
+      cursor: pointer;
+    }
 
-/* 비디오 박스 */
-.player-box {
-  border-radius: 10px;
-  overflow: hidden;
-  background: #000;
-  border: 1px solid #222;
-}
+    .filter-bar .btn-reset {
+      background: #151a2c;
+      color: #fff;
+    }
 
-.main-video {
-  display: block;
-  width: 100%;
-  max-height: 460px;
-}
+    .filter-bar .btn-export {
+      background: #4b59ff;
+      color: #fff;
+    }
 
-/* 메타 줄 */
-.meta-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-top: 10px;
-  font-size: 13px;
-}
+    /* ===== 데스크탑용 리스트 ===== */
+    .revenue-list {
+      background: #050814;
+      border-radius: 14px;
+      padding: 10px 12px 16px;
+      box-shadow: 0 12px 30px rgba(0,0,0,0.6);
+    }
 
-.meta-left {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
+    .revenue-list .list-header,
+    .revenue-list .list-row {
+      display: grid;
+      grid-template-columns: 32px minmax(0, 2.4fr) repeat(4, minmax(0, 1fr));
+      align-items: center;
+      column-gap: 12px;
+    }
 
-.badge {
-  padding: 2px 8px;
-  border-radius: 999px;
-  background: #ffcc33;
-  color: #000;
-  font-size: 12px;
-}
+    .revenue-list .list-header {
+      font-size: 13px;
+      font-weight: 600;
+      color: rgba(255,255,255,0.7);
+      padding: 6px 4px;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+      margin-bottom: 6px;
+    }
 
-.meta-text {
-  color: #bbb;
-}
+    .revenue-list .list-row {
+      padding: 8px 4px;
+      border-bottom: 1px solid rgba(255,255,255,0.04);
+      font-size: 14px;
+    }
 
-.pill-btn {
-  border: none;
-  border-radius: 999px;
-  background: #181818;
-  color: #eee;
-  padding: 6px 12px;
-  font-size: 12px;
-  cursor: pointer;
-  margin-left: 6px;
-}
+    .revenue-list .list-row:last-child {
+      border-bottom: none;
+    }
 
-/* 촬영자 카드 */
-.creator-card {
-  margin-top: 16px;
-  padding: 12px;
-  border-radius: 10px;
-  border: 1px solid #222;
-  background: #101010;
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
+    .revenue-list .list-row:hover {
+      background: rgba(255,255,255,0.02);
+    }
 
-.creator-avatar {
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  background: linear-gradient(135deg, #ff7b33, #ff33a8);
-}
+    .video-cell {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-width: 0;
+    }
 
-.creator-text h2 {
-  font-size: 15px;
-  margin-bottom: 4px;
-}
+    .video-cell .thumb {
+      width: 46px;
+      height: 32px;
+      border-radius: 6px;
+      background: linear-gradient(135deg, #ff7b74, #ffc15a);
+      flex-shrink: 0;
+    }
 
-.creator-text p {
-  font-size: 12px;
-  color: #aaa;
-}
+    .video-cell strong {
+      display: block;
+      font-size: 14px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
 
-.follow-btn {
-  margin-left: auto;
-  padding: 6px 12px;
-  font-size: 12px;
-  border-radius: 999px;
-  border: none;
-  cursor: pointer;
-  background: #ffcc33;
-  color: #000;
-}
+    .video-cell p {
+      font-size: 12px;
+      color: rgba(255,255,255,0.7);
+    }
 
-/* 설명 카드 */
-.desc-card {
-  margin-top: 16px;
-  padding: 14px;
-  border-radius: 10px;
-  border: 1px solid #222;
-  background: #101010;
-}
+    .revenue-list span {
+      font-size: 14px;
+    }
 
-.desc-card h2 {
-  font-size: 16px;
-  margin-bottom: 8px;
-}
+    .revenue-list input[type="checkbox"] {
+      width: 16px;
+      height: 16px;
+    }
 
-.desc-card p {
-  font-size: 13px;
-  color: #ddd;
-  line-height: 1.6;
-}
+    /* ===== 모바일 레이아웃 ===== */
+    @media (max-width: 768px) {
 
-/* 목록 카드 */
-.list-card {
-  margin-top: 18px;
-  padding: 14px;
-  border-radius: 10px;
-  border: 1px solid #222;
-  background: #101010;
-}
+      .revenue-page {
+        padding: 16px 10px 32px;
+      }
 
-.list-card h2 {
-  font-size: 16px;
-  margin-bottom: 10px;
-}
+      .summary-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 10px;
+      }
 
-/* 썸네일 리스트 */
-.thumb-list {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
+      .filter-bar {
+        flex-direction: column;
+        align-items: stretch;
+      }
 
-.thumb-item {
-  display: flex;
-  gap: 10px;
-  padding: 6px;
-  border-radius: 8px;
-  border: 1px solid #222;
-  background: #111;
-  cursor: pointer;
-  transition: background 0.15s ease, border-color 0.15s ease;
-}
+      .filter-bar input,
+      .filter-bar select,
+      .filter-bar button {
+        width: 100%;
+      }
 
-.thumb-item.active,
-.thumb-item:hover {
-  border-color: #ffcc33;
-  background: #1d1d1d;
-}
+      .revenue-list {
+        padding: 8px 6px 12px;
+      }
 
-.thumb-item img {
-  width: 100px;
-  height: 64px;
-  object-fit: cover;
-  border-radius: 6px;
-}
+      /* 헤더는 안 보이게 */
+      .revenue-list .list-header {
+        display: none;
+      }
 
-.thumb-text h3 {
-  font-size: 14px;
-  margin-bottom: 4px;
-}
+      /* 각 행을 카드 형태로 */
+      .revenue-list .list-row {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: flex-start;
+        row-gap: 6px;
+        column-gap: 8px;
+        padding: 10px 8px;
+        border-radius: 10px;
+        margin-bottom: 6px;
+      }
 
-.thumb-text p {
-  font-size: 12px;
-  color: #aaa;
-}
+      .revenue-list .list-row input[type="checkbox"] {
+        order: 1;
+        margin-top: 4px;
+      }
 
-/* 추천 섹션 (항상 맨 아래) */
-.extra-section {
-  margin-top: 20px;
-  padding-top: 14px;
-  border-top: 1px solid #222;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 16px;
-}
+      .revenue-list .list-row .video-cell {
+        order: 2;
+        width: calc(100% - 28px); /* 체크박스 옆에 오도록 */
+      }
 
-.extra-block {
-  flex: 1 1 260px;
-}
+      /* 가격 / 구매 / 내수익 / 업로드 텍스트들을
+         2열 정보 블록처럼 보이게 재배치 */
+      .revenue-list .list-row span:nth-of-type(1), /* 가격 */
+      .revenue-list .list-row span:nth-of-type(2), /* 구매 */
+      .revenue-list .list-row span:nth-of-type(3), /* 내수익 */
+      .revenue-list .list-row span:nth-of-type(4)  /* 업로드 */{
+        flex: 0 0 50%;
+        font-size: 13px;
+        color: rgba(255,255,255,0.85);
+      }
 
-.extra-block h2 {
-  font-size: 15px;
-  margin-bottom: 8px;
-}
+      .revenue-list .list-row span:nth-of-type(1) { order: 3; }
+      .revenue-list .list-row span:nth-of-type(2) { order: 4; }
+      .revenue-list .list-row span:nth-of-type(3) { order: 5; }
+      .revenue-list .list-row span:nth-of-type(4) { order: 6; }
 
-.pill-row,
-.creator-list {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-}
+      /* 각 항목 앞에 라벨 붙이기 */
+      .revenue-list .list-row span:nth-of-type(1)::before {
+        content: "가격 ";
+        color: rgba(255,255,255,0.55);
+        margin-right: 4px;
+      }
+      .revenue-list .list-row span:nth-of-type(2)::before {
+        content: "구매 ";
+        color: rgba(255,255,255,0.55);
+        margin-right: 4px;
+      }
+      .revenue-list .list-row span:nth-of-type(3)::before {
+        content: "내수익 ";
+        color: rgba(255,255,255,0.55);
+        margin-right: 4px;
+      }
+      .revenue-list .list-row span:nth-of-type(4)::before {
+        content: "업로드 ";
+        color: rgba(255,255,255,0.55);
+        margin-right: 4px;
+      }
+    }
+  </style>
+</head>
+<body>
 
-.pill,
-.creator-chip {
-  padding: 4px 10px;
-  border-radius: 999px;
-  border: 1px solid #333;
-  font-size: 12px;
-  color: #ccc;
-}
+<header class="site-header">
+  <div class="logo">Patreon</div>
+  <button class="menu-toggle">☰</button>
 
-.pill:hover,
-.creator-chip:hover {
-  border-color: #ffcc33;
-  color: #ffcc33;
-}
+  <nav class="main-nav">
+    <a href="index.html">홈</a>
+    <a href="projects.html">프로젝트</a>
+    <a href="creators.html">크리에이터</a>
+    <a href="revenue.html" class="active">수익정산</a>
+    <a href="contact.html">문의</a>
+  </nav>
 
-/* 푸터 */
-.site-footer {
-  margin-top: 24px;
-  padding: 12px 16px 20px;
-  font-size: 12px;
-  color: #777;
-  border-top: 1px solid #222;
-  text-align: center;
-}
+  <div class="user-area">
+    <span class="user-name">세아커플</span>
+    <div class="avatar"></div>
+  </div>
+</header>
 
-/* 모바일 최적화 */
-@media (max-width: 768px) {
-  /* 이미 있던 코드들 위/아래에 섞어 넣어도 됨 */
+<main class="page revenue-page">
 
-  /* 헤더 줄 정리 */
-  .site-header {
-    padding: 8px 10px;
+  <h1 class="page-title">영상 수익 정산</h1>
+  <p class="page-desc">
+    내가 올린 영상들의 매출, 플랫폼 수수료, 정산 금액을 한눈에 확인하는 페이지입니다.
+  </p>
+
+  <!-- 상단 요약 카드 -->
+  <section class="summary-grid">
+
+    <div class="summary-box">
+      <span class="label">총 누적 수익 (NET)</span>
+      <span class="value" id="totalNet">$0.00</span>
+      <span class="sub">플랫폼 수수료 차감 후</span>
+    </div>
+
+    <div class="summary-box">
+      <span class="label">이번 달 수익</span>
+      <span class="value" id="monthlyNet">$0.00</span>
+      <span class="sub">이번 달 1일 ~ 오늘</span>
+    </div>
+
+    <div class="summary-box">
+      <span class="label">판매 중인 영상</span>
+      <span class="value" id="videoCount">0개</span>
+      <span class="sub">비공개 / 삭제 영상 제외</span>
+    </div>
+
+    <div class="summary-box">
+      <span class="label">정산 대기</span>
+      <span class="value" id="pendingNet">$0.00</span>
+      <span class="sub">최근 업로드된 영상 기준</span>
+    </div>
+
+  </section>
+
+  <!-- 필터 영역 (UI만, 아직 기능 X) -->
+  <section class="filter-bar">
+
+    <input type="date">
+    <span>~</span>
+    <input type="date">
+
+    <input type="text" placeholder="영상 이름으로 검색">
+
+    <select>
+      <option>수익 높은 순</option>
+      <option>수익 낮은 순</option>
+      <option>최신 업로드순</option>
+      <option>구매자 많은 순</option>
+    </select>
+
+    <button class="btn-reset">필터 초기화</button>
+    <button class="btn-export">CSV 내보내기</button>
+
+  </section>
+
+  <!-- 영상 리스트 -->
+  <section class="revenue-list">
+
+    <div class="list-header">
+      <span><input type="checkbox" id="checkAll"></span>
+      <span>영상</span>
+      <span>가격</span>
+      <span>구매</span>
+      <span>내수익</span>
+      <span>업로드</span>
+    </div>
+
+    <!-- 여기 안에 JS로 18개 row가 렌더링됨 -->
+    <div id="revenueRows"></div>
+
+  </section>
+
+</main>
+
+<footer class="site-footer">
+  © 2025 수익정산 · 로컬 테스트 페이지
+</footer>
+
+<!-- 공통 스크립트 (메뉴 토글 등) -->
+<script src="./js/main.js"></script>
+
+<!-- 수익 정산 로직 -->
+<script>
+  // ====== 1. 영상 데이터 정의 (18개) =======
+  const videos = [
+    { id: 'VR0001', title: '남친, 초대남과 화끈한 플레이',   price: 15, buyers: 250, date: '2025-11-25', pending: true },
+    { id: 'VR0002', title: '야외 자위 플레이',    price: 10, buyers: 125, date: '2025-11-12', pending: true },
+    { id: 'VR0003', title: '커플 스와핑',         price: 15.00, buyers: 420, date: '2025-10-20', pending: true },
+    { id: 'VR0004', title: '자극적인 SM플레이',       price: 16,  buyers: 551, date: '2025-10-15', pending: false },
+    { id: 'VR0005', title: '배달원을 꼬시다',    price: 20,  buyers: 801, date: '2025-10-10', pending: false },
+    { id: 'VR0006', title: '파이즈리에 정석',       price: 8,  buyers: 956, date: '2025-10-05', pending: false },
+    { id: 'VR0007', title: '미련한 여자때문에',          price: 12, buyers: 1120, date: '2025-10-01', pending: false },
+    { id: 'VR0008', title: '섹스하면 대물남',        price: 19.00,  buyers: 1190, date: '2025-09-28', pending: false },
+    { id: 'VR0009', title: '홍콩에 가는 그녀',              price: 25,  buyers: 1270, date: '2025-09-25', pending: false },
+    { id: 'VR0010', title: '미치도록 빨아재끼는',             price: 20,  buyers: 1160, date: '2025-09-20', pending: false },
+    { id: 'VR0011', title: '항문이 터질거 같아',           price: 30, buyers: 2102, date: '2025-09-15', pending: false },
+    { id: 'VR0012', title: '아헤가오 야릇',             price: 5,  buyers: 3330, date: '2025-09-10', pending: false },
+    { id: 'VR0013', title: '오럴로 뻑간다',           price: 12, buyers: 2190,  date: '2025-09-05', pending: false },
+    { id: 'VR0014', title: '존나 박아 넣네',          price: 20,  buyers: 3940, date: '2025-09-01', pending: false },
+    { id: 'VR0015', title: '개 쩌는 스킬',           price: 25, buyers: 4270,  date: '2025-08-25', pending: false },
+    { id: 'VR0016', title: '목조르고 섹스',       price: 30,  buyers: 6240, date: '2025-08-20', pending: false },
+    { id: 'VR0017', title: '5번 섹스',             price: 25,  buyers: 8075, date: '2025-08-15', pending: false },
+    { id: 'VR0018', title: '나의 야릇한 신음소리',             price: 5,  buyers: 3098,  date: '2025-08-10', pending: false },
+  ];
+
+  const CREATOR_RATE = 0.8; // 내 수익 비율(80%)
+
+  function formatMoney(num) {
+    return '$' + num.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
   }
 
-  /* ✅ 메뉴 버튼 보이기 */
-  .menu-toggle {
-    display: block;
+  // 리스트 렌더링
+  const rowsContainer = document.getElementById('revenueRows');
+
+  function renderRows() {
+    rowsContainer.innerHTML = '';
+
+    videos.forEach(video => {
+      const net = video.price * video.buyers * CREATOR_RATE;
+
+      const row = document.createElement('div');
+      row.className = 'list-row';
+      row.innerHTML = `
+        <input type="checkbox">
+        <div class="video-cell">
+          <div class="thumb"></div>
+          <div>
+            <strong>${video.title}</strong>
+            <p>${formatMoney(video.price)} · ID: ${video.id}</p>
+          </div>
+        </div>
+        <span>${formatMoney(video.price)}</span>
+        <span>${video.buyers}</span>
+        <span>${formatMoney(net)}</span>
+        <span>${video.date}</span>
+      `;
+      rowsContainer.appendChild(row);
+    });
   }
 
-  /* 모바일에서는 유저 이름은 숨기고 아바타만 */
-  .user-area {
-    gap: 4px;
-    font-size: 11px;
+  // 요약 카드 계산
+  const totalNetEl   = document.getElementById('totalNet');
+  const monthlyNetEl = document.getElementById('monthlyNet');
+  const videoCountEl = document.getElementById('videoCount');
+  const pendingNetEl = document.getElementById('pendingNet');
+
+  function updateSummary() {
+    let totalNet = 0;
+    let pendingNet = 0;
+
+    videos.forEach(v => {
+      const gross = v.price * v.buyers;
+      const net   = gross * CREATOR_RATE;
+      totalNet += net;
+      if (v.pending) pendingNet += net;
+    });
+
+    // 총 누적 수익의 10%를 이번 달 수익으로 가정
+    const monthlyNet = totalNet * 0.10;
+
+    totalNetEl.textContent   = formatMoney(totalNet);
+    monthlyNetEl.textContent = formatMoney(monthlyNet);
+    videoCountEl.textContent = videos.length + '개';
+    pendingNetEl.textContent = formatMoney(pendingNet);
   }
 
-  .user-name {
-    display: none;
+  // 랜덤 수익 증가 (30초마다)
+  function tickRandomRevenue() {
+    const idx = Math.floor(Math.random() * videos.length);
+    const deltaBuyers = Math.floor(Math.random() * 5) + 1; // 1~5명 랜덤 추가
+    videos[idx].buyers += deltaBuyers;
+    renderRows();
+    updateSummary();
   }
 
-  /* ✅ 상단 메뉴는 기본으로 숨김 */
-  .main-nav {
-    position: absolute;
-    top: 56px;              /* 헤더 바로 아래 */
-    left: 0;
-    right: 0;
-    background: #050505;
-    border-bottom: 1px solid #222;
-    padding: 8px 14px;
-    display: none;          /* 기본 숨김 */
-    gap: 10px;
-    flex-wrap: wrap;
-    font-size: 13px;
-  }
+  renderRows();
+  updateSummary();
+  setInterval(tickRandomRevenue, 30000);
+</script>
 
-  /* ✅ body에 nav-open 클래스가 붙으면 메뉴 열기 */
-  body.nav-open .main-nav {
-    display: flex;
-  }
-
-  /* 메뉴 글자 줄바꿈 방지 조금 줄이기 */
-  .main-nav a {
-    white-space: nowrap;
-  }
-}
-
-.revenue-page {
-  padding: 20px;
-  color: #fff;
-}
-
-/* 요약 카드 */
-.summary-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit,minmax(160px,1fr));
-  gap: 15px;
-  margin-bottom: 25px;
-}
-
-.summary-box {
-  background: linear-gradient(180deg,#0f172a,#020617);
-  border-radius: 16px;
-  padding: 16px;
-  box-shadow: inset 0 0 0 1px #1e293b;
-}
-
-.summary-box .label {
-  font-size: 12px;
-  opacity: .7;
-}
-
-.summary-box .value {
-  font-size: 26px;
-  font-weight: bold;
-  margin: 6px 0;
-}
-
-.summary-box .sub {
-  font-size: 11px;
-  opacity: .5;
-}
-
-/* 필터 */
-.filter-bar {
-  display: flex;
-  gap: 8px;
-  flex-wrap: wrap;
-  margin-bottom: 15px;
-}
-
-.filter-bar input,
-.filter-bar select,
-.filter-bar button {
-  background: #020617;
-  color: white;
-  border: 1px solid #1e293b;
-  border-radius: 10px;
-  padding: 8px;
-}
-
-/* TABLE 느낌 리스트 */
-.revenue-list {
-  background: #020617;
-  border-radius: 16px;
-  overflow: hidden;
-}
-
-.list-header,
-.list-row {
-  display: grid;
-  grid-template-columns: 40px 1fr 80px 60px 80px 90px;
-  align-items: center;
-  padding: 10px;
-}
-
-.list-header {
-  border-bottom: 1px solid #1e293b;
-  font-weight: bold;
-  opacity: .6;
-}
-
-.list-row {
-  border-bottom: 1px solid rgba(255,255,255,0.05);
-}
-
-.list-row:last-child {
-  border-bottom: none;
-}
-
-.video-cell {
-  display: flex;
-  gap: 10px;
-  align-items: center;
-}
-
-.thumb {
-  width: 45px;
-  height: 45px;
-  background: #1e293b;
-  border-radius: 8px;
-}
-
-.list-row strong {
-  font-size: 14px;
-}
-
-.list-row p {
-  font-size: 11px;
-  opacity: .6;
-}
-
-/* 버튼 색 */
-.btn-export {
-  background: linear-gradient(135deg,#6366f1,#9333ea);
-  border: none;
-  font-weight: bold;
-}
-
-/* ===========================
-   📱 모바일(폭 768px 이하)에서 리스트 카드로 변환
-   =========================== */
-@media (max-width: 768px) {
-
-  /* 헤더줄 숨기기 (영상 / 가격 / 구매 / 내수익 / 업로드) */
-  .revenue-list .list-header {
-    display: none;
-  }
-
-  /* 각 행을 카드처럼 세로 배치 */
-  .revenue-list .list-row {
-    display: block;
-    padding: 14px 16px;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-  }
-
-  .revenue-list .list-row .row-check {
-    margin-right: 6px;
-    vertical-align: middle;
-  }
-
-  /* 썸네일 + 제목 줄 */
-  .revenue-list .video-cell {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    margin-bottom: 6px;
-  }
-
-  .revenue-list .video-cell .thumb {
-    width: 44px;
-    height: 44px;
-    border-radius: 8px;
-    background: rgba(255, 255, 255, 0.1);
-    flex-shrink: 0;
-  }
-
-  .revenue-list .video-cell strong {
-    display: block;
-    font-size: 14px;
-    line-height: 1.3;
-  }
-
-  .revenue-list .video-cell p {
-    margin: 3px 0 0;
-    font-size: 11px;
-    color: rgba(255, 255, 255, 0.6);
-  }
-
-  /* 아래 정보줄들 (가격, 구매, 내수익, 업로드) */
-  .revenue-list .col-price,
-  .revenue-list .col-buy,
-  .revenue-list .col-net,
-  .revenue-list .col-date {
-    display: inline-block;
-    font-size: 11px;
-    color: rgba(255, 255, 255, 0.8);
-    margin-right: 12px;
-    margin-top: 2px;
-  }
-
-  /* 라벨 붙이기 */
-  .revenue-list .col-price::before {
-    content: "가격 ";
-    color: rgba(255, 255, 255, 0.5);
-  }
-
-  .revenue-list .col-buy::before {
-    content: "구매 ";
-    color: rgba(255, 255, 255, 0.5);
-  }
-
-  .revenue-list .col-net::before {
-    content: "내수익 ";
-    color: rgba(255, 255, 255, 0.5);
-  }
-
-  .revenue-list .col-date::before {
-    content: "업로드 ";
-    color: rgba(255, 255, 255, 0.5);
-  }
-}
+</body>
+</html>
