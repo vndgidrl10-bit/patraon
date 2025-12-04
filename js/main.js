@@ -1,13 +1,13 @@
-document.addEventListener("DOMContentLoaded", () => {
-  const mainVideo = document.getElementById("mainVideo");
-  const mainSource = document.getElementById("mainSource");
-  const mainTitle = document.getElementById("mainTitle");
-  const mainMeta = document.getElementById("mainMeta");
-  const mainDesc = document.getElementById("mainDesc");
-  const creatorName = document.getElementById("creatorName");
-  const creatorDesc = document.getElementById("creatorDesc");
+document.addEventListener('DOMContentLoaded', () => {
+  const menuBtn = document.querySelector('.menu-toggle');
+  const nav = document.querySelector('.main-nav');
 
-  const items = document.querySelectorAll(".thumb-item");
+  if (menuBtn && nav) {
+    menuBtn.addEventListener('click', () => {
+      nav.classList.toggle('open');
+    });
+  }
+});
   
 
   items.forEach(item => {
@@ -53,4 +53,5 @@ document.addEventListener("DOMContentLoaded", () => {
       document.body.classList.remove("nav-open");
     });
   });
+
 });
