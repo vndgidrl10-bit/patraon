@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Patreon</title>
+
+  <!-- ✅ CSS 상대경로 명확화 -->
+  <link rel="stylesheet" href="./css/style.css" />
+</head>
+<body>
+
+  <!-- 상단 헤더 -->
+  <header class="site-header">
+    <div class="logo">Patreon</div>
+
+    <!-- 모바일 메뉴 버튼 -->
+    <button class="menu-toggle" aria-label="메뉴 열기/닫기">☰</button>
+
+    <nav class="main-nav">
+      <a href="index.html">홈</a>
+      <a href="projects.html">프로젝트</a>
+      <a href="creators.html">크리에이터</a>
+      <a href="revenue.html">수익정산</a>   <!-- 여기를 연결 -->
+      <a href="contact.html">문의</a>
+    </nav>
+
+    <div class="user-area">
+      <span class="user-name">비비커플</span>
+      <div class="avatar"></div>
+    </div>
+  </header>
+
+  <main class="page">
+
+    <section class="bread">홈 &gt; 프로젝트 &gt; 선택된 영상</section>
+
+    <h1 class="page-title" id="mainTitle">남친, 초대남과 화끈한 플레이</h1>
+
+    <!-- 메인 비디오 -->
+    <section class="player-box">
+      <video id="mainVideo" class="main-video" controls poster="./assets/images/thumb1.jpg">
+        <source id="mainSource" src="./assets/videos/video1.mp4" type="video/mp4" />
+        브라우저가 동영상을 지원하지 않습니다.
+      </video>
+    </section>
+
+    <!-- 정보줄 -->
+    <section class="meta-row">
+      <div class="meta-left">
+        <span class="badge">영상</span>
+        <span class="meta-text" id="mainMeta">2025 · 비비커플 채널 · 9분 30초</span>
+      </div>
+      <div class="meta-right">
+        <button class="pill-btn">❤ 3755</button>
+        <button class="pill-btn">⤴ 공유</button>
+      </div>
+    </section>
+
+    <!-- 촬영자 카드 -->
+    <section class="creator-card">
+      <div class="creator-avatar"></div>
+      <div class="creator-text">
+        <h2 id="creatorName">비비커플</h2>
+        <p id="creatorDesc">
+          부끄러움 많은 우리 커플이 용기내어 올리는 섹스 다이어리
+        </p>
+      </div>
+      <button class="follow-btn">팔로우</button>
+    </section>
+
+    <!-- 설명 -->
+    <section class="desc-card">
+      <h2>프로젝트 설명</h2>
+      <p id="mainDesc">
+        오늘 초대남 1명을 불렀어요. 초대남이 제법 큰 성기로 절 즐겁게 해주네요
+        여러분이 좋아할지 모르겠지만 2:1플레이로 색다른 느낌의 관계를 보여드리겠습니다.
+      </p>
+    </section>
+
+    <!-- 프로젝트 목록 -->
+    <section class="list-card">
+      <h2>프로젝트 목록</h2>
+
+      <div class="thumb-list">
+
+        <!-- 카드 1 -->
+        <article class="thumb-item active"
+          data-video="./assets/videos/video1.mp4"
+          data-thumb="./assets/images/thumb1.jpg"
+          data-title="남친, 초대남과 화끈한 플레이"
+          data-meta="2025 · 광고 · 15초"
+          data-creator="촬영자 A"
+          data-creator-desc="광고·숏폼 위주로 촬영하는 크리에이터 A입니다."
+          data-desc="샘플 1 설명입니다.">
+          <img src="./assets/images/thumb1.jpg" alt="썸네일 1" />
+          <div class="thumb-text">
+            <h3>남친, 초대남과 화끈한 플레이</h3>
+            <p>화끈한 플레이</p>
+          </div>
+        </article>
+
+        <!-- 카드 2 -->
+        <article class="thumb-item"
+          data-video="./assets/videos/video2.mp4"
+          data-thumb="./assets/images/thumb2.jpg"
+          data-title="촬영 샘플 2"
+          data-meta="2025 · 뮤직비디오 · 3분"
+          data-creator="촬영자 B"
+          data-creator-desc="라이브·뮤직비디오를 촬영하는 B입니다."
+          data-desc="샘플 2 설명입니다.">
+          <img src="./assets/images/thumb2.jpg" alt="썸네일 2" />
+          <div class="thumb-text">
+            <h3>야외 자위 플레이</h3>
+            <p>대담한 광안리 해수욕장에서 이루어지는 자위</p>
+          </div>
+        </article>
+
+        <!-- 카드 3 -->
+        <article class="thumb-item"
+          data-video="./assets/videos/video3.mp4"
+          data-thumb="./assets/images/thumb3.jpg"
+          data-title="촬영 샘플 3"
+          data-meta="2024 · 브이로그 · 8분"
+          data-creator="촬영자 C"
+          data-creator-desc="여행·일상 브이로그를 촬영하는 C입니다."
+          data-desc="샘플 3 설명입니다.">
+          <img src="./assets/images/thumb3.jpg" alt="썸네일 3" />
+          <div class="thumb-text">
+            <h3>커플 스와핑</h3>
+            <p>남자친구의 친구 커플과 2:2 섹스플레이</p>
+          </div>
+        </article>
+
+      </div>
+    </section>
+
+    <!-- 추천 섹션 -->
+    <section class="extra-section">
+      <div class="extra-block">
+        <h2>추천 카테고리</h2>
+        <div class="pill-row">
+          <span class="pill">광고</span>
+          <span class="pill">브이로그</span>
+          <span class="pill">뮤직비디오</span>
+          <span class="pill">브랜드 필름</span>
+          <span class="pill">인터뷰</span>
+        </div>
+      </div>
+
+      <div class="extra-block">
+        <h2>추천 크리에이터</h2>
+        <div class="creator-list">
+          <div class="creator-chip">촬영자 A</div>
+          <div class="creator-chip">촬영자 B</div>
+          <div class="creator-chip">촬영자 C</div>
+          <div class="creator-chip">신입 크리에이터</div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="site-footer">
+    © 2025 My Local PDing Style · 개인 공부용 페이지
+  </footer>
+
+  <!-- ✅ JS 상대경로 명확화 -->
+  <script src="./js/main.js"></script>
+
+</body>
+</html>
