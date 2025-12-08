@@ -442,25 +442,27 @@
   const videoCountEl = document.getElementById('videoCount');
   const pendingNetEl = document.getElementById('pendingNet');
 
-  function updateSummary() {
-    let totalNet = 0;
-    let pendingNet = 0;
+ function updateSummary() {
+  let totalNet = 0;
+  let pendingNet = 0;
 
-    videos.forEach(v => {
-      const gross = v.price * v.buyers;
-      const net   = gross * CREATOR_RATE;
-      totalNet += net;
-      if (v.pending) pendingNet += net;
-    });
+  videos.forEach(v => {
+    const gross = v.price * v.buyers;
+    const net   = gross * CREATOR_RATE;
+    totalNet += net;
+    if (v.pending) pendingNet += net;
+  });
 
-    // 총 누적 수익의 10%를 이번 달 수익으로 가정
-    const pendingNet = totalNet * 0.2;
+  const monthlyNet = totalNet * 0.2;
 
-    totalNetEl.textContent   = formatMoney(totalNet);
-    monthlyNetEl.textContent = formatMoney(pendingNet);
-    videoCountEl.textContent = videos.length + '개';
-    pendingNetEl.textContent = formatMoney(monthlyNet);
-  }
+  totalNetEl.textContent   = formatMoney(totalNet);
+  monthlyNetEl.textContent = formatMoney(monthlyNet);
+  videoCountEl.textContent = videos.length + '개';
+
+  // ✅ 저번달 금액 고정값
+  pendingNetEl.textContent = "$23,012.00";
+}
+
 
   // 랜덤 수익 증가 (랜덤초마다[1~15])
 function tickRandomRevenue() {
@@ -481,6 +483,7 @@ tickRandomRevenue();
 
 </body>
 </html>
+
 
 
 
