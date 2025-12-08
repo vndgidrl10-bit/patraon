@@ -311,9 +311,9 @@
     </div>
 
     <div class="summary-box">
-      <span class="label">이번 달 수익(USD)</span>
+      <span class="label">출금 가능 금액(USD)</span>
       <span class="value" id="monthlyNet">$0.00</span>
-      <span class="sub">이번 달 1일 ~ 오늘</span>
+      <span class="sub">출금요청 후 10일 걸립니다.</span>
     </div>
 
     <div class="summary-box">
@@ -323,9 +323,9 @@
     </div>
 
     <div class="summary-box">
-      <span class="label">정산 대기</span>
+      <span class="label">저번달 수익(USD)</span>
       <span class="value" id="pendingNet">$0.00</span>
-      <span class="sub">최근 업로드된 영상 기준</span>
+      <span class="sub">저번덜 1일~말일</span>
     </div>
 
   </section>
@@ -381,23 +381,23 @@
 <script>
   // ====== 1. 영상 데이터 정의 (18개) =======
   const videos = [
-    { id: 'VR0001', title: '남친, 초대남과 화끈한 플레이',   price: 15, buyers: 250, date: '2025-11-25', pending: true },
-    { id: 'VR0002', title: '야외 자위 플레이',    price: 10, buyers: 125, date: '2025-11-12', pending: true },
-    { id: 'VR0003', title: '커플 스와핑',         price: 15.00, buyers: 420, date: '2025-10-20', pending: true },
-    { id: 'VR0004', title: '자극적인 SM플레이',       price: 16,  buyers: 551, date: '2025-10-15', pending: false },
-    { id: 'VR0005', title: '배달원을 꼬시다',    price: 20,  buyers: 801, date: '2025-10-10', pending: false },
-    { id: 'VR0006', title: '파이즈리에 정석',       price: 8,  buyers: 956, date: '2025-10-05', pending: false },
-    { id: 'VR0007', title: '미련한 여자때문에',          price: 12, buyers: 1120, date: '2025-10-01', pending: false },
-    { id: 'VR0008', title: '섹스하면 대물남',        price: 19.00,  buyers: 1190, date: '2025-09-28', pending: false },
-    { id: 'VR0009', title: '홍콩에 가는 그녀',              price: 25,  buyers: 1270, date: '2025-09-25', pending: false },
-    { id: 'VR0010', title: '미치도록 빨아재끼는',             price: 20,  buyers: 1160, date: '2025-09-20', pending: false },
-    { id: 'VR0011', title: '항문이 터질거 같아',           price: 30, buyers: 2102, date: '2025-09-15', pending: false },
-    { id: 'VR0012', title: '아헤가오 야릇',             price: 5,  buyers: 3330, date: '2025-09-10', pending: false },
-    { id: 'VR0013', title: '오럴로 뻑간다',           price: 12, buyers: 2190,  date: '2025-09-05', pending: false },
-    { id: 'VR0014', title: '존나 박아 넣네',          price: 20,  buyers: 3940, date: '2025-09-01', pending: false },
-    { id: 'VR0015', title: '개 쩌는 스킬',           price: 25, buyers: 4270,  date: '2025-08-25', pending: false },
-    { id: 'VR0016', title: '목조르고 섹스',       price: 30,  buyers: 6240, date: '2025-08-20', pending: false },
-    { id: 'VR0017', title: '5번 섹스',             price: 25,  buyers: 8075, date: '2025-08-15', pending: false },
+    { id: 'VR0001', title: '남친, 초대남과 화끈한 플레이',   price: 15, buyers: 30, date: '2025-11-25', pending: true },
+    { id: 'VR0002', title: '야외 자위 플레이',    price: 10, buyers: 52, date: '2025-11-12', pending: true },
+    { id: 'VR0003', title: '커플 스와핑',         price: 15.00, buyers: 76, date: '2025-10-20', pending: true },
+    { id: 'VR0004', title: '자극적인 SM플레이',       price: 16,  buyers: 151, date: '2025-10-15', pending: false },
+    { id: 'VR0005', title: '배달원을 꼬시다',    price: 20,  buyers: 206, date: '2025-10-10', pending: false },
+    { id: 'VR0006', title: '파이즈리에 정석',       price: 8,  buyers: 85, date: '2025-10-05', pending: false },
+    { id: 'VR0007', title: '미련한 여자때문에',          price: 12, buyers: 235, date: '2025-10-01', pending: false },
+    { id: 'VR0008', title: '섹스하면 대물남',        price: 19.00,  buyers: 190, date: '2025-09-28', pending: false },
+    { id: 'VR0009', title: '홍콩에 가는 그녀',              price: 25,  buyers: 270, date: '2025-09-25', pending: false },
+    { id: 'VR0010', title: '미치도록 빨아재끼는',             price: 20,  buyers: 160, date: '2025-09-20', pending: false },
+    { id: 'VR0011', title: '항문이 터질거 같아',           price: 30, buyers: 502, date: '2025-09-15', pending: false },
+    { id: 'VR0012', title: '아헤가오 야릇',             price: 5,  buyers: 330, date: '2025-09-10', pending: false },
+    { id: 'VR0013', title: '오럴로 뻑간다',           price: 12, buyers: 190,  date: '2025-09-05', pending: false },
+    { id: 'VR0014', title: '존나 박아 넣네',          price: 20,  buyers: 940, date: '2025-09-01', pending: false },
+    { id: 'VR0015', title: '개 쩌는 스킬',           price: 25, buyers: 576,  date: '2025-08-25', pending: false },
+    { id: 'VR0016', title: '목조르고 섹스',       price: 30,  buyers: 840, date: '2025-08-20', pending: false },
+    { id: 'VR0017', title: '5번 섹스',             price: 25,  buyers: 1075, date: '2025-08-15', pending: false },
     { id: 'VR0018', title: '나의 야릇한 신음소리',             price: 5,  buyers: 3098,  date: '2025-08-10', pending: false },
   ];
 
@@ -481,6 +481,7 @@ tickRandomRevenue();
 
 </body>
 </html>
+
 
 
 
