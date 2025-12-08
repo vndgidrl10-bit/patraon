@@ -453,7 +453,7 @@
     if (v.pending) pendingNet += net;
   });
 
-  const monthlyNet = totalNet * 0.2;
+  const monthlyNet = totalNet * 0.15;
 
   totalNetEl.textContent   = formatMoney(totalNet);
   monthlyNetEl.textContent = formatMoney(monthlyNet);
@@ -483,6 +483,7 @@ tickRandomRevenue();
 
 </body>
 </html>
+
 
 
 
