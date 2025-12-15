@@ -3,23 +3,424 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Patraon – 비비커플</title>
+  <title>수익정산</title>
 
   <link rel="stylesheet" href="./css/style.css">
+
+  <style>
+    /* ===== 공통 레이아웃 보정 ===== */
+    .revenue-page {
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: 24px 16px 40px;
+    }
+
+    .revenue-page .page-title {
+      font-size: 26px;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+
+    .revenue-page .page-desc {
+      font-size: 14px;
+      color: rgba(255,255,255,0.7);
+      margin-bottom: 24px;
+    }
+
+    /* ===== 상단 요약 카드 ===== */
+    .summary-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 16px;
+      margin-bottom: 16px;
+    }
+
+    .summary-box {
+      background: #090d1f;
+      border-radius: 14px;
+      padding: 14px 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+    }
+
+    .summary-box .label {
+      font-size: 12px;
+      color: rgba(255,255,255,0.6);
+    }
+
+    .summary-box .value {
+      font-size: 22px;
+      font-weight: 700;
+    }
+
+    .summary-box .sub {
+      font-size: 12px;
+      color: rgba(255,255,255,0.5);
+    }
+
+    /* ===== 출금대기 배너 ===== */
+    .withdraw-status {
+      background: #050814;
+      border-radius: 14px;
+      padding: 12px 14px;
+      box-shadow: 0 12px 30px rgba(0,0,0,0.6);
+      margin-bottom: 16px;
+      display: none;
+      border: 1px solid rgba(255,255,255,0.08);
+    }
+    .withdraw-status .title {
+      font-size: 14px;
+      font-weight: 700;
+      margin-bottom: 6px;
+    }
+    .withdraw-status .line {
+      font-size: 13px;
+      color: rgba(255,255,255,0.85);
+      margin-bottom: 4px;
+    }
+    .withdraw-status .hint {
+      font-size: 12px;
+      color: rgba(255,255,255,0.55);
+      margin-top: 6px;
+    }
+
+    /* ===== 필터 바 ===== */
+    .filter-bar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+      background: #050814;
+      border-radius: 12px;
+      padding: 10px 12px;
+      margin-bottom: 16px;
+    }
+
+    .filter-bar input[type="date"],
+    .filter-bar input[type="text"],
+    .filter-bar select {
+      background: #0b1020;
+      color: #fff;
+      border-radius: 8px;
+      border: 1px solid rgba(255,255,255,0.1);
+      padding: 6px 8px;
+      font-size: 13px;
+    }
+
+    .filter-bar .btn-reset,
+    .filter-bar .btn-export {
+      border: none;
+      border-radius: 8px;
+      padding: 6px 10px;
+      font-size: 13px;
+      cursor: pointer;
+    }
+
+    .filter-bar .btn-reset {
+      background: #151a2c;
+      color: #fff;
+    }
+
+    .filter-bar .btn-export {
+      background: #4b59ff;
+      color: #fff;
+    }
+
+    /* ===== 데스크탑용 리스트 ===== */
+    .revenue-list {
+      background: #050814;
+      border-radius: 14px;
+      padding: 10px 12px 16px;
+      box-shadow: 0 12px 30px rgba(0,0,0,0.6);
+    }
+
+    .revenue-list .list-header,
+    .revenue-list .list-row {
+      display: grid;
+      grid-template-columns: 32px minmax(0, 2.4fr) repeat(4, minmax(0, 1fr));
+      align-items: center;
+      column-gap: 12px;
+    }
+
+    .revenue-list .list-header {
+      font-size: 13px;
+      font-weight: 600;
+      color: rgba(255,255,255,0.7);
+      padding: 6px 4px;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+      margin-bottom: 6px;
+    }
+
+    .revenue-list .list-row {
+      padding: 8px 4px;
+      border-bottom: 1px solid rgba(255,255,255,0.04);
+      font-size: 14px;
+    }
+
+    .revenue-list .list-row:last-child {
+      border-bottom: none;
+    }
+
+    .revenue-list .list-row:hover {
+      background: rgba(255,255,255,0.02);
+    }
+
+    .video-cell {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-width: 0;
+    }
+
+    .video-cell .thumb {
+      width: 46px;
+      height: 32px;
+      border-radius: 6px;
+      background: linear-gradient(135deg, #ff7b74, #ffc15a);
+      flex-shrink: 0;
+    }
+
+    .video-cell strong {
+      display: block;
+      font-size: 14px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .video-cell p {
+      font-size: 12px;
+      color: rgba(255,255,255,0.7);
+    }
+
+    .revenue-list span {
+      font-size: 14px;
+    }
+
+    .revenue-list input[type="checkbox"] {
+      width: 16px;
+      height: 16px;
+    }
+
+    /* ===== 출금 모달 ===== */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.55);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 18px;
+      z-index: 9999;
+    }
+
+    .modal {
+      width: 100%;
+      max-width: 420px;
+      background: #050814;
+      border-radius: 14px;
+      border: 1px solid rgba(255,255,255,0.10);
+      box-shadow: 0 20px 60px rgba(0,0,0,0.7);
+      overflow: hidden;
+    }
+
+    .modal .modal-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 14px;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+    }
+
+    .modal .modal-title {
+      font-size: 14px;
+      font-weight: 800;
+    }
+
+    .modal .modal-close {
+      background: transparent;
+      color: rgba(255,255,255,0.8);
+      border: none;
+      font-size: 18px;
+      cursor: pointer;
+      padding: 4px 8px;
+    }
+
+    .modal .modal-body {
+      padding: 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .field label {
+      display: block;
+      font-size: 12px;
+      color: rgba(255,255,255,0.65);
+      margin-bottom: 6px;
+    }
+
+    .field input,
+    .field select {
+      width: 100%;
+      background: #0b1020;
+      color: #fff;
+      border-radius: 10px;
+      border: 1px solid rgba(255,255,255,0.12);
+      padding: 10px 10px;
+      font-size: 14px;
+      outline: none;
+    }
+
+    .mini-info {
+      font-size: 12px;
+      color: rgba(255,255,255,0.6);
+      margin-top: 2px;
+    }
+
+    .error {
+      display: none;
+      font-size: 12px;
+      color: #ff6b6b;
+      background: rgba(255, 107, 107, 0.10);
+      border: 1px solid rgba(255, 107, 107, 0.25);
+      padding: 8px 10px;
+      border-radius: 10px;
+    }
+
+    .modal .modal-actions {
+      display: flex;
+      gap: 10px;
+      padding: 12px 14px 14px;
+      border-top: 1px solid rgba(255,255,255,0.08);
+    }
+
+    .btn {
+      flex: 1;
+      border: none;
+      border-radius: 10px;
+      padding: 10px 12px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .btn-cancel {
+      background: #151a2c;
+      color: #fff;
+    }
+
+    .btn-withdraw {
+      background: #4b59ff;
+      color: #fff;
+    }
+
+    .btn-withdraw:disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+    }
+
+    /* ===== 모바일 레이아웃 ===== */
+    @media (max-width: 768px) {
+      .revenue-page {
+        padding: 16px 10px 32px;
+      }
+
+      .summary-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 10px;
+      }
+
+      .filter-bar {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      .filter-bar input,
+      .filter-bar select,
+      .filter-bar button {
+        width: 100%;
+      }
+
+      .revenue-list {
+        padding: 8px 6px 12px;
+      }
+
+      .revenue-list .list-header {
+        display: none;
+      }
+
+      .revenue-list .list-row {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: flex-start;
+        row-gap: 6px;
+        column-gap: 8px;
+        padding: 10px 8px;
+        border-radius: 10px;
+        margin-bottom: 6px;
+      }
+
+      .revenue-list .list-row input[type="checkbox"] {
+        order: 1;
+        margin-top: 4px;
+      }
+
+      .revenue-list .list-row .video-cell {
+        order: 2;
+        width: calc(100% - 28px);
+      }
+
+      .revenue-list .list-row span:nth-of-type(1),
+      .revenue-list .list-row span:nth-of-type(2),
+      .revenue-list .list-row span:nth-of-type(3),
+      .revenue-list .list-row span:nth-of-type(4) {
+        flex: 0 0 50%;
+        font-size: 13px;
+        color: rgba(255,255,255,0.85);
+      }
+
+      .revenue-list .list-row span:nth-of-type(1) { order: 3; }
+      .revenue-list .list-row span:nth-of-type(2) { order: 4; }
+      .revenue-list .list-row span:nth-of-type(3) { order: 5; }
+      .revenue-list .list-row span:nth-of-type(4) { order: 6; }
+
+      .revenue-list .list-row span:nth-of-type(1)::before {
+        content: "가격 ";
+        color: rgba(255,255,255,0.55);
+        margin-right: 4px;
+      }
+      .revenue-list .list-row span:nth-of-type(2)::before {
+        content: "구매 ";
+        color: rgba(255,255,255,0.55);
+        margin-right: 4px;
+      }
+      .revenue-list .list-row span:nth-of-type(3)::before {
+        content: "내수익 ";
+        color: rgba(255,255,255,0.55);
+        margin-right: 4px;
+      }
+      .revenue-list .list-row span:nth-of-type(4)::before {
+        content: "업로드 ";
+        color: rgba(255,255,255,0.55);
+        margin-right: 4px;
+      }
+    }
+  </style>
 </head>
+
 <body>
 
-<!-- ************** HEADER ************** -->
 <header class="site-header">
   <div class="logo">Patraon</div>
-
-  <button class="menu-toggle" aria-label="메뉴 열기/닫기">☰</button>
+  <button class="menu-toggle">☰</button>
 
   <nav class="main-nav">
-    <a href="index.html" class="active">홈</a>
+    <a href="index.html">홈</a>
     <a href="projects.html">프로젝트</a>
     <a href="creators.html">크리에이터</a>
-    <a href="revenue.html">수익정산</a>
+    <a href="revenue.html" class="active">수익정산</a>
     <a href="contact.html">문의</a>
   </nav>
 
@@ -29,176 +430,412 @@
   </div>
 </header>
 
-<!-- ************** MAIN ************** -->
-<main class="page">
+<main class="page revenue-page">
 
-  <section class="bread">홈 &gt; 프로젝트 &gt; 선택된 영상</section>
+  <h1 class="page-title">영상 수익 정산</h1>
+  <p class="page-desc">
+    내가 올린 영상들의 매출, 플랫폼 수수료, 정산 금액을 한눈에 확인하는 페이지입니다.
+  </p>
 
-  <h1 class="page-title" id="mainTitle">남친, 초대남과 화끈한 플레이</h1>
-
-  <!-- 메인 비디오 -->
-  <section class="player-box">
-    <video id="mainVideo" class="main-video" controls poster="./assets/images/thumb1.jpg">
-      <source id="mainSource" src="./assets/videos/video1.mp4" type="video/mp4" />
-      브라우저가 동영상을 지원하지 않습니다.
-    </video>
-  </section>
-
-  <!-- 정보줄 -->
-  <section class="meta-row">
-    <div class="meta-row-left">
-      <span class="badge">영상</span>
-      <span class="meta-text" id="mainMeta">2025 · 비비커플 채널 · 9분 30초</span>
+  <!-- 상단 요약 카드 -->
+  <section class="summary-grid">
+    <div class="summary-box">
+      <span class="label">총 누적 수익 (USD)</span>
+      <span class="value" id="totalNet">$0.00</span>
+      <span class="sub">플랫폼 수수료 차감 후</span>
     </div>
-    <div class="meta-row-right">
-      <button class="pill-btn">❤ 3755</button>
-      <button class="pill-btn">⤴ 공유</button>
+
+    <div class="summary-box">
+      <span class="label">출금 가능 금액(USD)</span>
+      <span class="value" id="monthlyNet">$0.00</span>
+      <span class="sub" id="withdrawHint">출금요청 후 10일 걸립니다.</span>
     </div>
-  </section>
 
-  <!-- 크리에이터 카드 -->
-  <section class="creator-card">
-    <div class="creator-avatar"></div>
-    <div class="creator-text">
-      <h2 id="creatorName">비비커플</h2>
-      <p id="creatorDesc">
-        부끄러움 많은 우리 커플이 용기내어 올리는 섹스 다이어리
-      </p>
+    <div class="summary-box">
+      <span class="label">판매 중인 영상</span>
+      <span class="value" id="videoCount">0개</span>
+      <span class="sub">비공개 / 삭제 영상 제외</span>
     </div>
-    <button class="follow-btn">팔로우</button>
-  </section>
 
-  <!-- 설명 -->
-  <section class="desc-card">
-    <h3>프로젝트 설명</h3>
-    <p id="mainDesc">
-      오늘 초대남 1명을 불렀어요. 초대남이 제법 큰 성기로 절 즐겁게 해주네요.
-      여러분이 좋아할지 모르겠지만 2:1 플레이로 색다른 느낌의 관계를 보여드리겠습니다.
-    </p>
-  </section>
-
-  <!-- 프로젝트 목록 -->
-  <section class="list-card">
-    <h2>프로젝트 목록</h2>
-
-    <div class="thumb-list">
-
-      <!-- 카드 1 -->
-      <article class="thumb-item"
-        data-video="./assets/videos/video1.mp4"
-        data-thumb="./assets/images/thumb1.jpg"
-        data-title="남친, 초대남과 화끈한 플레이"
-        data-meta="2025 · 비비커플 채널 · 9분 30초"
-        data-desc="남친과 초대남이 함께하는 화끈한 2:1 플레이 영상입니다.">
-        <img src="./assets/images/thumb1.jpg" alt="썸네일 1">
-        <div class="thumb-text">
-          <h3>남친, 초대남과 화끈한 플레이</h3>
-          <p>초대남과 함께하는 첫 2:1 플레이</p>
-        </div>
-      </article>
-
-      <!-- 카드 2 -->
-      <article class="thumb-item"
-        data-video="./assets/videos/video2.mp4"
-        data-thumb="./assets/images/thumb2.jpg"
-        data-title="야외 자위 플레이"
-        data-meta="2025 · 야외 촬영 · 7분 10초"
-        data-desc="광안리 인근에서 촬영한 대담한 야외 자위 영상입니다.">
-        <img src="./assets/images/thumb2.jpg" alt="썸네일 2">
-        <div class="thumb-text">
-          <h3>야외 자위 플레이</h3>
-          <p>바닷가에서 즐기는 대담한 자위</p>
-        </div>
-      </article>
-
-      <!-- 카드 3 -->
-      <article class="thumb-item"
-        data-video="./assets/videos/video3.mp4"
-        data-thumb="./assets/images/thumb3.jpg"
-        data-title="커플 스와핑"
-        data-meta="2024 · 브이로그 · 8분 05초"
-        data-desc="친한 커플과 함께 스와핑을 시도하는 과정을 담은 영상입니다.">
-        <img src="./assets/images/thumb3.jpg" alt="썸네일 3">
-        <div class="thumb-text">
-          <h3>커플 스와핑</h3>
-          <p>친한 커플과 2:2로 즐기는 스와핑</p>
-        </div>
-      </article>
-
+    <div class="summary-box">
+      <span class="label">저번달 수익(USD)</span>
+      <span class="value" id="pendingNet">$0.00</span>
+      <span class="sub">저번덜 1일~말일</span>
     </div>
   </section>
 
-  <!-- 추천 섹션 -->
-  <section class="extra-section">
+  <!-- ✅ 출금 대기 상태 배너 -->
+  <section class="withdraw-status" id="withdrawStatus">
+    <div class="title">출금대기</div>
+    <div class="line">요청 금액: <strong id="pendingAmount">$0.00</strong></div>
+    <div class="line">은행/계좌: <strong id="pendingAccount">-</strong></div>
+    <div class="hint">출금은 요청일 기준 <strong>10일 후</strong>에 입금됩니다.</div>
+  </section>
 
-    <div class="extra-block">
-      <h2>추천 카테고리</h2>
-      <span class="pill">광고</span>
-      <span class="pill">브이로그</span>
-      <span class="pill">뮤직비디오</span>
-      <span class="pill">브랜드 필름</span>
-      <span class="pill">인터뷰</span>
+  <!-- 필터 영역 -->
+  <section class="filter-bar">
+    <input type="date">
+    <span>~</span>
+    <input type="date">
+    <input type="text" placeholder="영상 이름으로 검색">
+    <select>
+      <option>수익 높은 순</option>
+      <option>수익 낮은 순</option>
+      <option>최신 업로드순</option>
+      <option>구매자 많은 순</option>
+    </select>
+
+    <button class="btn-reset">필터 초기화</button>
+    <button class="btn-export" id="openWithdraw">출금요청</button>
+  </section>
+
+  <!-- 영상 리스트 -->
+  <section class="revenue-list">
+    <div class="list-header">
+      <span><input type="checkbox" id="checkAll"></span>
+      <span>영상</span>
+      <span>가격</span>
+      <span>구매</span>
+      <span>내수익</span>
+      <span>업로드</span>
     </div>
-
-    <div class="extra-block">
-      <h2>추천 크리에이터</h2>
-      <div class="creator-chip">촬영자 A</div>
-      <div class="creator-chip">촬영자 B</div>
-      <div class="creator-chip">촬영자 C</div>
-      <div class="creator-chip">신규 크리에이터</div>
-    </div>
-
+    <div id="revenueRows"></div>
   </section>
 
 </main>
 
 <footer class="site-footer">
-  © 2025 My Local PDing · 개인 공부용 페이지
+  © 2025 수익정산 · 로컬 테스트 페이지
 </footer>
 
-<!-- ************** JS: 메뉴 토글 + 썸네일 클릭 ************** -->
-<script>
-  // 상단 메뉴 토글
-  const menuBtn = document.querySelector('.menu-toggle');
-  const nav = document.querySelector('.main-nav');
+<!-- ✅ 출금 모달 -->
+<div class="modal-overlay" id="withdrawModal">
+  <div class="modal">
+    <div class="modal-head">
+      <div class="modal-title">출금 요청</div>
+      <button class="modal-close" id="closeWithdraw" aria-label="닫기">×</button>
+    </div>
 
-  if (menuBtn && nav) {
-    menuBtn.addEventListener('click', () => {
-      nav.classList.toggle('open');
+    <div class="modal-body">
+      <div class="field">
+        <label>출금 가능 금액</label>
+        <div class="mini-info" id="availableText">$0.00</div>
+      </div>
+
+      <div class="field">
+        <label>출금 금액 (USD)</label>
+        <input type="number" id="withdrawAmount" min="1" step="0.01" placeholder="예: 120.00">
+        <div class="mini-info">출금요청 후 10일 걸립니다.</div>
+      </div>
+
+      <div class="field">
+        <label>은행</label>
+        <select id="bankSelect">
+          <option value="">은행 선택</option>
+          <option>KB국민</option>
+          <option>신한</option>
+          <option>우리</option>
+          <option>하나</option>
+          <option>NH농협</option>
+          <option>카카오뱅크</option>
+          <option>토스뱅크</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <label>계좌번호</label>
+        <input type="text" id="accountInput" placeholder="예: 110-123-456789">
+      </div>
+
+      <div class="error" id="withdrawError">출금 가능 금액을 초과했습니다. 출금이 불가능합니다.</div>
+    </div>
+
+    <div class="modal-actions">
+      <button class="btn btn-cancel" id="cancelWithdraw">취소</button>
+      <button class="btn btn-withdraw" id="submitWithdraw" disabled>출금하기</button>
+    </div>
+  </div>
+</div>
+
+<script src="./js/main.js"></script>
+
+<script>
+  // ====== 1. 영상 데이터 정의 (18개) =======
+  const videos = [
+    { id: 'VR0001', title: '남친, 초대남과 화끈한 플레이',   price: 15, buyers: 30, date: '2025-11-25', pending: true },
+    { id: 'VR0002', title: '야외 자위 플레이',    price: 10, buyers: 52, date: '2025-10-12', pending: true },
+    { id: 'VR0003', title: '커플 스와핑',         price: 15.00, buyers: 76, date: '2025-10-05', pending: true },
+    { id: 'VR0004', title: '자극적인 SM플레이',       price: 16,  buyers: 151, date: '2025-9-15', pending: false },
+    { id: 'VR0005', title: '배달원을 꼬시다',    price: 20,  buyers: 206, date: '2025-9-10', pending: false },
+    { id: 'VR0006', title: '파이즈리에 정석',       price: 8,  buyers: 85, date: '2025-8-15', pending: false },
+    { id: 'VR0007', title: '미련한 여자때문에',          price: 12, buyers: 235, date: '2025-8-05', pending: false },
+    { id: 'VR0008', title: '섹스하면 대물남',        price: 19.00,  buyers: 190, date: '2025-07-28', pending: false },
+    { id: 'VR0009', title: '홍콩에 가는 그녀',              price: 25,  buyers: 270, date: '2025-07-25', pending: false },
+    { id: 'VR0010', title: '미치도록 빨아재끼는',             price: 20,  buyers: 160, date: '2025-07-20', pending: false },
+    { id: 'VR0011', title: '항문이 터질거 같아',           price: 30, buyers: 502, date: '2025-07-15', pending: false },
+    { id: 'VR0012', title: '아헤가오 야릇',             price: 5,  buyers: 330, date: '2025-07-10', pending: false },
+    { id: 'VR0013', title: '오럴로 뻑간다',           price: 12, buyers: 190,  date: '2025-07-05', pending: false },
+    { id: 'VR0014', title: '존나 박아 넣네',          price: 20,  buyers: 940, date: '2025-07-01', pending: false },
+    { id: 'VR0015', title: '개 쩌는 스킬',           price: 25, buyers: 576,  date: '2025-06-25', pending: false },
+    { id: 'VR0016', title: '목조르고 섹스',       price: 30,  buyers: 840, date: '2025-06-20', pending: false },
+    { id: 'VR0017', title: '5번 섹스',             price: 25,  buyers: 1075, date: '2025-06-15', pending: false },
+    { id: 'VR0018', title: '나의 야릇한 신음소리',             price: 5,  buyers: 3098,  date: '2025-06-10', pending: false },
+  ];
+
+  const CREATOR_RATE = 0.8; // 내 수익 비율(80%)
+
+  function formatMoney(num) {
+    return '$' + Number(num).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+  }
+
+  // ====== 2. 출금 상태(로컬 저장) ======
+  const STORAGE_KEY = 'patraon_withdraw_request_v1';
+
+  function loadWithdrawState() {
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      return raw ? JSON.parse(raw) : null;
+    } catch (e) {
+      return null;
+    }
+  }
+
+  function saveWithdrawState(state) {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+  }
+
+  function clearWithdrawState() {
+    localStorage.removeItem(STORAGE_KEY);
+  }
+
+  let withdrawState = loadWithdrawState(); 
+  // 예시 구조:
+  // { amount: 120.00, bank: "신한", account: "110-xxx", requestedAt: "2025-12-15T..." }
+
+  function getWithdrawPendingAmount() {
+    return withdrawState && withdrawState.amount ? Number(withdrawState.amount) : 0;
+  }
+
+  // ====== 3. 리스트 렌더링 ======
+  const rowsContainer = document.getElementById('revenueRows');
+
+  function renderRows() {
+    rowsContainer.innerHTML = '';
+
+    videos.forEach(video => {
+      const net = video.price * video.buyers * CREATOR_RATE;
+
+      const row = document.createElement('div');
+      row.className = 'list-row';
+      row.innerHTML = `
+        <input type="checkbox">
+        <div class="video-cell">
+          <div class="thumb"></div>
+          <div>
+            <strong>${video.title}</strong>
+            <p>${formatMoney(video.price)} · ID: ${video.id}</p>
+          </div>
+        </div>
+        <span>${formatMoney(video.price)}</span>
+        <span>${video.buyers}</span>
+        <span>${formatMoney(net)}</span>
+        <span>${video.date}</span>
+      `;
+      rowsContainer.appendChild(row);
     });
   }
 
-  // 썸네일 카드 클릭 시 메인 영상 교체
-  const mainVideo   = document.getElementById('mainVideo');
-  const mainSource  = document.getElementById('mainSource');
-  const mainTitle   = document.getElementById('mainTitle');
-  const mainMeta    = document.getElementById('mainMeta');
-  const mainDesc    = document.getElementById('mainDesc');
+  // ====== 4. 요약 카드 계산 + "출금가능금액 = 기본값 - 출금요청금액" ======
+  const totalNetEl   = document.getElementById('totalNet');
+  const monthlyNetEl = document.getElementById('monthlyNet');
+  const videoCountEl = document.getElementById('videoCount');
+  const pendingNetEl = document.getElementById('pendingNet');
 
-  document.querySelectorAll('.thumb-item').forEach(card => {
-    card.addEventListener('click', () => {
-      const video = card.dataset.video;
-      const title = card.dataset.title;
-      const meta  = card.dataset.meta;
-      const desc  = card.dataset.desc;
-      const thumb = card.dataset.thumb;
+  function updateSummary() {
+    let totalNet = 0;
+    let pendingNet = 0;
 
-      if (mainSource && mainVideo) {
-        mainSource.src = video;
-        mainVideo.load();
-        mainVideo.play().catch(() => {});
-      }
-      if (thumb) {
-        mainVideo.setAttribute('poster', thumb);
-      }
-      if (title) mainTitle.textContent = title;
-      if (meta)  mainMeta.textContent  = meta;
-      if (desc)  mainDesc.textContent  = desc;
-
-      // 모바일에서 위로 스크롤
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+    videos.forEach(v => {
+      const gross = v.price * v.buyers;
+      const net   = gross * CREATOR_RATE;
+      totalNet += net;
+      if (v.pending) pendingNet += net;
     });
+
+    // 기존 로직 유지(테스트용)
+    const baseMonthlyNet = totalNet * 0.15;
+
+    // ✅ 출금요청금액만큼 차감
+    const requested = getWithdrawPendingAmount();
+    const available = Math.max(0, baseMonthlyNet - requested);
+
+    totalNetEl.textContent   = formatMoney(totalNet);
+    monthlyNetEl.textContent = formatMoney(available);
+    videoCountEl.textContent = videos.length + '개';
+
+    // ✅ 저번달 금액 고정값
+    pendingNetEl.textContent = "$23,012.00";
+  }
+
+  // ====== 5. 출금대기 배너 표시/갱신 ======
+  const withdrawStatusEl = document.getElementById('withdrawStatus');
+  const pendingAmountEl  = document.getElementById('pendingAmount');
+  const pendingAccountEl = document.getElementById('pendingAccount');
+
+  function updateWithdrawBanner() {
+    if (!withdrawState || !withdrawState.amount) {
+      withdrawStatusEl.style.display = 'none';
+      return;
+    }
+    withdrawStatusEl.style.display = 'block';
+    pendingAmountEl.textContent = formatMoney(withdrawState.amount);
+    pendingAccountEl.textContent = `${withdrawState.bank} / ${withdrawState.account}`;
+  }
+
+  // ====== 6. 출금 모달 UI ======
+  const openWithdrawBtn = document.getElementById('openWithdraw');
+  const modalOverlay = document.getElementById('withdrawModal');
+  const closeWithdrawBtn = document.getElementById('closeWithdraw');
+  const cancelWithdrawBtn = document.getElementById('cancelWithdraw');
+  const submitWithdrawBtn = document.getElementById('submitWithdraw');
+
+  const availableTextEl = document.getElementById('availableText');
+  const amountInput = document.getElementById('withdrawAmount');
+  const bankSelect  = document.getElementById('bankSelect');
+  const accountInput= document.getElementById('accountInput');
+  const errorEl     = document.getElementById('withdrawError');
+
+  function computeBaseMonthlyNet() {
+    let totalNet = 0;
+    videos.forEach(v => totalNet += (v.price * v.buyers * CREATOR_RATE));
+    return totalNet * 0.15;
+  }
+
+  function getCurrentAvailable() {
+    const base = computeBaseMonthlyNet();
+    const requested = getWithdrawPendingAmount();
+    return Math.max(0, base - requested);
+  }
+
+  function openModal() {
+    // 출금 대기 중이면 추가 출금 막기(원하면 허용으로 바꿀 수도 있음)
+    if (withdrawState && withdrawState.amount) {
+      alert('이미 출금요청이 진행 중입니다. (출금대기)\n출금은 요청일 기준 10일 후에 입금됩니다.');
+      return;
+    }
+
+    amountInput.value = '';
+    bankSelect.value = '';
+    accountInput.value = '';
+    errorEl.style.display = 'none';
+    submitWithdrawBtn.disabled = true;
+
+    availableTextEl.textContent = formatMoney(getCurrentAvailable());
+
+    modalOverlay.style.display = 'flex';
+  }
+
+  function closeModal() {
+    modalOverlay.style.display = 'none';
+  }
+
+  function setError(show, message) {
+    if (!show) {
+      errorEl.style.display = 'none';
+      errorEl.textContent = '출금 가능 금액을 초과했습니다. 출금이 불가능합니다.';
+      return;
+    }
+    errorEl.style.display = 'block';
+    errorEl.textContent = message;
+  }
+
+  function validateWithdrawForm() {
+    const available = getCurrentAvailable();
+    const amt = Number(amountInput.value || 0);
+    const bank = bankSelect.value.trim();
+    const acc  = accountInput.value.trim();
+
+    // 기본 체크
+    if (!amt || amt <= 0) {
+      setError(false);
+      submitWithdrawBtn.disabled = true;
+      return;
+    }
+    if (!bank || !acc) {
+      setError(false);
+      submitWithdrawBtn.disabled = true;
+      return;
+    }
+
+    // ✅ 초과 출금 금지
+    if (amt > available) {
+      setError(true, '출금 가능 금액을 초과했습니다. 출금이 불가능합니다.');
+      submitWithdrawBtn.disabled = true;
+      return;
+    }
+
+    setError(false);
+    submitWithdrawBtn.disabled = false;
+  }
+
+  openWithdrawBtn.addEventListener('click', openModal);
+  closeWithdrawBtn.addEventListener('click', closeModal);
+  cancelWithdrawBtn.addEventListener('click', closeModal);
+
+  modalOverlay.addEventListener('click', (e) => {
+    if (e.target === modalOverlay) closeModal();
   });
+
+  amountInput.addEventListener('input', validateWithdrawForm);
+  bankSelect.addEventListener('change', validateWithdrawForm);
+  accountInput.addEventListener('input', validateWithdrawForm);
+
+  submitWithdrawBtn.addEventListener('click', () => {
+    const available = getCurrentAvailable();
+    const amt = Number(amountInput.value || 0);
+    const bank = bankSelect.value.trim();
+    const acc  = accountInput.value.trim();
+
+    if (amt > available) {
+      setError(true, '출금 가능 금액을 초과했습니다. 출금이 불가능합니다.');
+      return;
+    }
+
+    withdrawState = {
+      amount: amt,
+      bank,
+      account: acc,
+      requestedAt: new Date().toISOString()
+    };
+    saveWithdrawState(withdrawState);
+
+    // UI 반영
+    closeModal();
+    updateWithdrawBanner();
+    updateSummary();
+
+    alert('출금요청이 완료되었습니다.\n출금은 요청일 기준 10일 후에 입금됩니다.');
+  });
+
+  // ====== 7. 랜덤 수익 증가 ======
+  function tickRandomRevenue() {
+    const idx = Math.floor(Math.random() * videos.length);
+    const deltaBuyers = Math.floor(Math.random() * 8) + 1;
+    videos[idx].buyers += deltaBuyers;
+
+    renderRows();
+    updateSummary();
+    updateWithdrawBanner();
+
+    const nextTime = Math.floor(Math.random() * 15000) + 1000;
+    setTimeout(tickRandomRevenue, nextTime);
+  }
+
+  // 최초 실행
+  renderRows();
+  updateSummary();
+  updateWithdrawBanner();
+  tickRandomRevenue();
 </script>
 
 </body>
