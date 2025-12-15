@@ -3,288 +3,23 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>수익정산</title>
+  <title>Patraon – 비비커플</title>
 
-  <!-- 기존 공통 스타일 -->
   <link rel="stylesheet" href="./css/style.css">
-
-  <!-- 🔹 수익정산 페이지 + 모바일 전용 오버라이드 -->
-  <style>
-    /* ===== 공통 레이아웃 보정 ===== */
-    .revenue-page {
-      max-width: 1000px;
-      margin: 0 auto;
-      padding: 24px 16px 40px;
-    }
-
-    .revenue-page .page-title {
-      font-size: 26px;
-      font-weight: 700;
-      margin-bottom: 8px;
-    }
-
-    .revenue-page .page-desc {
-      font-size: 14px;
-      color: rgba(255,255,255,0.7);
-      margin-bottom: 24px;
-    }
-
-    /* ===== 상단 요약 카드 ===== */
-    .summary-grid {
-      display: grid;
-      grid-template-columns: repeat(4, minmax(0, 1fr));
-      gap: 16px;
-      margin-bottom: 24px;
-    }
-
-    .summary-box {
-      background: #090d1f;
-      border-radius: 14px;
-      padding: 14px 16px;
-      display: flex;
-      flex-direction: column;
-      gap: 4px;
-      box-shadow: 0 10px 25px rgba(0,0,0,0.5);
-    }
-
-    .summary-box .label {
-      font-size: 12px;
-      color: rgba(255,255,255,0.6);
-    }
-
-    .summary-box .value {
-      font-size: 22px;
-      font-weight: 700;
-    }
-
-    .summary-box .sub {
-      font-size: 12px;
-      color: rgba(255,255,255,0.5);
-    }
-
-    /* ===== 필터 바 ===== */
-    .filter-bar {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-      align-items: center;
-      background: #050814;
-      border-radius: 12px;
-      padding: 10px 12px;
-      margin-bottom: 16px;
-    }
-
-    .filter-bar input[type="date"],
-    .filter-bar input[type="text"],
-    .filter-bar select {
-      background: #0b1020;
-      color: #fff;
-      border-radius: 8px;
-      border: 1px solid rgba(255,255,255,0.1);
-      padding: 6px 8px;
-      font-size: 13px;
-    }
-
-    .filter-bar .btn-reset,
-    .filter-bar .btn-export {
-      border: none;
-      border-radius: 8px;
-      padding: 6px 10px;
-      font-size: 13px;
-      cursor: pointer;
-    }
-
-    .filter-bar .btn-reset {
-      background: #151a2c;
-      color: #fff;
-    }
-
-    .filter-bar .btn-export {
-      background: #4b59ff;
-      color: #fff;
-    }
-
-    /* ===== 데스크탑용 리스트 ===== */
-    .revenue-list {
-      background: #050814;
-      border-radius: 14px;
-      padding: 10px 12px 16px;
-      box-shadow: 0 12px 30px rgba(0,0,0,0.6);
-    }
-
-    .revenue-list .list-header,
-    .revenue-list .list-row {
-      display: grid;
-      grid-template-columns: 32px minmax(0, 2.4fr) repeat(4, minmax(0, 1fr));
-      align-items: center;
-      column-gap: 12px;
-    }
-
-    .revenue-list .list-header {
-      font-size: 13px;
-      font-weight: 600;
-      color: rgba(255,255,255,0.7);
-      padding: 6px 4px;
-      border-bottom: 1px solid rgba(255,255,255,0.08);
-      margin-bottom: 6px;
-    }
-
-    .revenue-list .list-row {
-      padding: 8px 4px;
-      border-bottom: 1px solid rgba(255,255,255,0.04);
-      font-size: 14px;
-    }
-
-    .revenue-list .list-row:last-child {
-      border-bottom: none;
-    }
-
-    .revenue-list .list-row:hover {
-      background: rgba(255,255,255,0.02);
-    }
-
-    .video-cell {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      min-width: 0;
-    }
-
-    .video-cell .thumb {
-      width: 46px;
-      height: 32px;
-      border-radius: 6px;
-      background: linear-gradient(135deg, #ff7b74, #ffc15a);
-      flex-shrink: 0;
-    }
-
-    .video-cell strong {
-      display: block;
-      font-size: 14px;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-
-    .video-cell p {
-      font-size: 12px;
-      color: rgba(255,255,255,0.7);
-    }
-
-    .revenue-list span {
-      font-size: 14px;
-    }
-
-    .revenue-list input[type="checkbox"] {
-      width: 16px;
-      height: 16px;
-    }
-
-    /* ===== 모바일 레이아웃 ===== */
-    @media (max-width: 768px) {
-
-      .revenue-page {
-        padding: 16px 10px 32px;
-      }
-
-      .summary-grid {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-        gap: 10px;
-      }
-
-      .filter-bar {
-        flex-direction: column;
-        align-items: stretch;
-      }
-
-      .filter-bar input,
-      .filter-bar select,
-      .filter-bar button {
-        width: 100%;
-      }
-
-      .revenue-list {
-        padding: 8px 6px 12px;
-      }
-
-      /* 헤더는 안 보이게 */
-      .revenue-list .list-header {
-        display: none;
-      }
-
-      /* 각 행을 카드 형태로 */
-      .revenue-list .list-row {
-        display: flex;
-        flex-wrap: wrap;
-        align-items: flex-start;
-        row-gap: 6px;
-        column-gap: 8px;
-        padding: 10px 8px;
-        border-radius: 10px;
-        margin-bottom: 6px;
-      }
-
-      .revenue-list .list-row input[type="checkbox"] {
-        order: 1;
-        margin-top: 4px;
-      }
-
-      .revenue-list .list-row .video-cell {
-        order: 2;
-        width: calc(100% - 28px); /* 체크박스 옆에 오도록 */
-      }
-
-      /* 가격 / 구매 / 내수익 / 업로드 텍스트들을
-         2열 정보 블록처럼 보이게 재배치 */
-      .revenue-list .list-row span:nth-of-type(1), /* 가격 */
-      .revenue-list .list-row span:nth-of-type(2), /* 구매 */
-      .revenue-list .list-row span:nth-of-type(3), /* 내수익 */
-      .revenue-list .list-row span:nth-of-type(4)  /* 업로드 */{
-        flex: 0 0 50%;
-        font-size: 13px;
-        color: rgba(255,255,255,0.85);
-      }
-
-      .revenue-list .list-row span:nth-of-type(1) { order: 3; }
-      .revenue-list .list-row span:nth-of-type(2) { order: 4; }
-      .revenue-list .list-row span:nth-of-type(3) { order: 5; }
-      .revenue-list .list-row span:nth-of-type(4) { order: 6; }
-
-      /* 각 항목 앞에 라벨 붙이기 */
-      .revenue-list .list-row span:nth-of-type(1)::before {
-        content: "가격 ";
-        color: rgba(255,255,255,0.55);
-        margin-right: 4px;
-      }
-      .revenue-list .list-row span:nth-of-type(2)::before {
-        content: "구매 ";
-        color: rgba(255,255,255,0.55);
-        margin-right: 4px;
-      }
-      .revenue-list .list-row span:nth-of-type(3)::before {
-        content: "내수익 ";
-        color: rgba(255,255,255,0.55);
-        margin-right: 4px;
-      }
-      .revenue-list .list-row span:nth-of-type(4)::before {
-        content: "업로드 ";
-        color: rgba(255,255,255,0.55);
-        margin-right: 4px;
-      }
-    }
-  </style>
 </head>
 <body>
 
+<!-- ************** HEADER ************** -->
 <header class="site-header">
   <div class="logo">Patraon</div>
-  <button class="menu-toggle">☰</button>
+
+  <button class="menu-toggle" aria-label="메뉴 열기/닫기">☰</button>
 
   <nav class="main-nav">
-    <a href="index.html">홈</a>
+    <a href="index.html" class="active">홈</a>
     <a href="projects.html">프로젝트</a>
     <a href="creators.html">크리에이터</a>
-    <a href="revenue.html" class="active">수익정산</a>
+    <a href="revenue.html">수익정산</a>
     <a href="contact.html">문의</a>
   </nav>
 
@@ -294,201 +29,177 @@
   </div>
 </header>
 
-<main class="page revenue-page">
+<!-- ************** MAIN ************** -->
+<main class="page">
 
-  <h1 class="page-title">영상 수익 정산</h1>
-  <p class="page-desc">
-    내가 올린 영상들의 매출, 플랫폼 수수료, 정산 금액을 한눈에 확인하는 페이지입니다.
-  </p>
+  <section class="bread">홈 &gt; 프로젝트 &gt; 선택된 영상</section>
 
-  <!-- 상단 요약 카드 -->
-  <section class="summary-grid">
+  <h1 class="page-title" id="mainTitle">남친, 초대남과 화끈한 플레이</h1>
 
-    <div class="summary-box">
-      <span class="label">총 누적 수익 (USD)</span>
-      <span class="value" id="totalNet">$0.00</span>
-      <span class="sub">플랫폼 수수료 차감 후</span>
-    </div>
-
-    <div class="summary-box">
-      <span class="label">출금 가능 금액(USD)</span>
-      <span class="value" id="monthlyNet">$0.00</span>
-      <span class="sub">출금요청 후 10일 걸립니다.</span>
-    </div>
-
-    <div class="summary-box">
-      <span class="label">판매 중인 영상</span>
-      <span class="value" id="videoCount">0개</span>
-      <span class="sub">비공개 / 삭제 영상 제외</span>
-    </div>
-
-    <div class="summary-box">
-      <span class="label">저번달 수익(USD)</span>
-      <span class="value" id="pendingNet">$0.00</span>
-      <span class="sub">저번덜 1일~말일</span>
-    </div>
-
+  <!-- 메인 비디오 -->
+  <section class="player-box">
+    <video id="mainVideo" class="main-video" controls poster="./assets/images/thumb1.jpg">
+      <source id="mainSource" src="./assets/videos/video1.mp4" type="video/mp4" />
+      브라우저가 동영상을 지원하지 않습니다.
+    </video>
   </section>
 
-  <!-- 필터 영역 (UI만, 아직 기능 X) -->
-  <section class="filter-bar">
-
-    <input type="date">
-    <span>~</span>
-    <input type="date">
-
-    <input type="text" placeholder="영상 이름으로 검색">
-
-    <select>
-      <option>수익 높은 순</option>
-      <option>수익 낮은 순</option>
-      <option>최신 업로드순</option>
-      <option>구매자 많은 순</option>
-    </select>
-
-    <button class="btn-reset">필터 초기화</button>
-    <button class="btn-export"> 출금요청 </button>
-
+  <!-- 정보줄 -->
+  <section class="meta-row">
+    <div class="meta-row-left">
+      <span class="badge">영상</span>
+      <span class="meta-text" id="mainMeta">2025 · 비비커플 채널 · 9분 30초</span>
+    </div>
+    <div class="meta-row-right">
+      <button class="pill-btn">❤ 3755</button>
+      <button class="pill-btn">⤴ 공유</button>
+    </div>
   </section>
 
-  <!-- 영상 리스트 -->
-  <section class="revenue-list">
+  <!-- 크리에이터 카드 -->
+  <section class="creator-card">
+    <div class="creator-avatar"></div>
+    <div class="creator-text">
+      <h2 id="creatorName">비비커플</h2>
+      <p id="creatorDesc">
+        부끄러움 많은 우리 커플이 용기내어 올리는 섹스 다이어리
+      </p>
+    </div>
+    <button class="follow-btn">팔로우</button>
+  </section>
 
-    <div class="list-header">
-      <span><input type="checkbox" id="checkAll"></span>
-      <span>영상</span>
-      <span>가격</span>
-      <span>구매</span>
-      <span>내수익</span>
-      <span>업로드</span>
+  <!-- 설명 -->
+  <section class="desc-card">
+    <h3>프로젝트 설명</h3>
+    <p id="mainDesc">
+      오늘 초대남 1명을 불렀어요. 초대남이 제법 큰 성기로 절 즐겁게 해주네요.
+      여러분이 좋아할지 모르겠지만 2:1 플레이로 색다른 느낌의 관계를 보여드리겠습니다.
+    </p>
+  </section>
+
+  <!-- 프로젝트 목록 -->
+  <section class="list-card">
+    <h2>프로젝트 목록</h2>
+
+    <div class="thumb-list">
+
+      <!-- 카드 1 -->
+      <article class="thumb-item"
+        data-video="./assets/videos/video1.mp4"
+        data-thumb="./assets/images/thumb1.jpg"
+        data-title="남친, 초대남과 화끈한 플레이"
+        data-meta="2025 · 비비커플 채널 · 9분 30초"
+        data-desc="남친과 초대남이 함께하는 화끈한 2:1 플레이 영상입니다.">
+        <img src="./assets/images/thumb1.jpg" alt="썸네일 1">
+        <div class="thumb-text">
+          <h3>남친, 초대남과 화끈한 플레이</h3>
+          <p>초대남과 함께하는 첫 2:1 플레이</p>
+        </div>
+      </article>
+
+      <!-- 카드 2 -->
+      <article class="thumb-item"
+        data-video="./assets/videos/video2.mp4"
+        data-thumb="./assets/images/thumb2.jpg"
+        data-title="야외 자위 플레이"
+        data-meta="2025 · 야외 촬영 · 7분 10초"
+        data-desc="광안리 인근에서 촬영한 대담한 야외 자위 영상입니다.">
+        <img src="./assets/images/thumb2.jpg" alt="썸네일 2">
+        <div class="thumb-text">
+          <h3>야외 자위 플레이</h3>
+          <p>바닷가에서 즐기는 대담한 자위</p>
+        </div>
+      </article>
+
+      <!-- 카드 3 -->
+      <article class="thumb-item"
+        data-video="./assets/videos/video3.mp4"
+        data-thumb="./assets/images/thumb3.jpg"
+        data-title="커플 스와핑"
+        data-meta="2024 · 브이로그 · 8분 05초"
+        data-desc="친한 커플과 함께 스와핑을 시도하는 과정을 담은 영상입니다.">
+        <img src="./assets/images/thumb3.jpg" alt="썸네일 3">
+        <div class="thumb-text">
+          <h3>커플 스와핑</h3>
+          <p>친한 커플과 2:2로 즐기는 스와핑</p>
+        </div>
+      </article>
+
+    </div>
+  </section>
+
+  <!-- 추천 섹션 -->
+  <section class="extra-section">
+
+    <div class="extra-block">
+      <h2>추천 카테고리</h2>
+      <span class="pill">광고</span>
+      <span class="pill">브이로그</span>
+      <span class="pill">뮤직비디오</span>
+      <span class="pill">브랜드 필름</span>
+      <span class="pill">인터뷰</span>
     </div>
 
-    <!-- 여기 안에 JS로 18개 row가 렌더링됨 -->
-    <div id="revenueRows"></div>
+    <div class="extra-block">
+      <h2>추천 크리에이터</h2>
+      <div class="creator-chip">촬영자 A</div>
+      <div class="creator-chip">촬영자 B</div>
+      <div class="creator-chip">촬영자 C</div>
+      <div class="creator-chip">신규 크리에이터</div>
+    </div>
 
   </section>
 
 </main>
 
 <footer class="site-footer">
-  © 2025 수익정산 · 로컬 테스트 페이지
+  © 2025 My Local PDing · 개인 공부용 페이지
 </footer>
 
-<!-- 공통 스크립트 (메뉴 토글 등) -->
-<script src="./js/main.js"></script>
-
-<!-- 수익 정산 로직 -->
+<!-- ************** JS: 메뉴 토글 + 썸네일 클릭 ************** -->
 <script>
-  // ====== 1. 영상 데이터 정의 (18개) =======
-  const videos = [
-    { id: 'VR0001', title: '남친, 초대남과 화끈한 플레이',   price: 15, buyers: 30, date: '2025-11-25', pending: true },
-    { id: 'VR0002', title: '야외 자위 플레이',    price: 10, buyers: 52, date: '2025-10-12', pending: true },
-    { id: 'VR0003', title: '커플 스와핑',         price: 15.00, buyers: 76, date: '2025-10-05', pending: true },
-    { id: 'VR0004', title: '자극적인 SM플레이',       price: 16,  buyers: 151, date: '2025-9-15', pending: false },
-    { id: 'VR0005', title: '배달원을 꼬시다',    price: 20,  buyers: 206, date: '2025-9-10', pending: false },
-    { id: 'VR0006', title: '파이즈리에 정석',       price: 8,  buyers: 85, date: '2025-8-15', pending: false },
-    { id: 'VR0007', title: '미련한 여자때문에',          price: 12, buyers: 235, date: '2025-8-05', pending: false },
-    { id: 'VR0008', title: '섹스하면 대물남',        price: 19.00,  buyers: 190, date: '2025-07-28', pending: false },
-    { id: 'VR0009', title: '홍콩에 가는 그녀',              price: 25,  buyers: 270, date: '2025-07-25', pending: false },
-    { id: 'VR0010', title: '미치도록 빨아재끼는',             price: 20,  buyers: 160, date: '2025-07-20', pending: false },
-    { id: 'VR0011', title: '항문이 터질거 같아',           price: 30, buyers: 502, date: '2025-07-15', pending: false },
-    { id: 'VR0012', title: '아헤가오 야릇',             price: 5,  buyers: 330, date: '2025-07-10', pending: false },
-    { id: 'VR0013', title: '오럴로 뻑간다',           price: 12, buyers: 190,  date: '2025-07-05', pending: false },
-    { id: 'VR0014', title: '존나 박아 넣네',          price: 20,  buyers: 940, date: '2025-07-01', pending: false },
-    { id: 'VR0015', title: '개 쩌는 스킬',           price: 25, buyers: 576,  date: '2025-06-25', pending: false },
-    { id: 'VR0016', title: '목조르고 섹스',       price: 30,  buyers: 840, date: '2025-06-20', pending: false },
-    { id: 'VR0017', title: '5번 섹스',             price: 25,  buyers: 1075, date: '2025-06-15', pending: false },
-    { id: 'VR0018', title: '나의 야릇한 신음소리',             price: 5,  buyers: 3098,  date: '2025-06-10', pending: false },
-  ];
+  // 상단 메뉴 토글
+  const menuBtn = document.querySelector('.menu-toggle');
+  const nav = document.querySelector('.main-nav');
 
-  const CREATOR_RATE = 0.8; // 내 수익 비율(80%)
-
-  function formatMoney(num) {
-    return '$' + num.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
-  }
-
-  // 리스트 렌더링
-  const rowsContainer = document.getElementById('revenueRows');
-
-  function renderRows() {
-    rowsContainer.innerHTML = '';
-
-    videos.forEach(video => {
-      const net = video.price * video.buyers * CREATOR_RATE;
-
-      const row = document.createElement('div');
-      row.className = 'list-row';
-      row.innerHTML = `
-        <input type="checkbox">
-        <div class="video-cell">
-          <div class="thumb"></div>
-          <div>
-            <strong>${video.title}</strong>
-            <p>${formatMoney(video.price)} · ID: ${video.id}</p>
-          </div>
-        </div>
-        <span>${formatMoney(video.price)}</span>
-        <span>${video.buyers}</span>
-        <span>${formatMoney(net)}</span>
-        <span>${video.date}</span>
-      `;
-      rowsContainer.appendChild(row);
+  if (menuBtn && nav) {
+    menuBtn.addEventListener('click', () => {
+      nav.classList.toggle('open');
     });
   }
 
-  // 요약 카드 계산
-  const totalNetEl   = document.getElementById('totalNet');
-  const monthlyNetEl = document.getElementById('monthlyNet');
-  const videoCountEl = document.getElementById('videoCount');
-  const pendingNetEl = document.getElementById('pendingNet');
+  // 썸네일 카드 클릭 시 메인 영상 교체
+  const mainVideo   = document.getElementById('mainVideo');
+  const mainSource  = document.getElementById('mainSource');
+  const mainTitle   = document.getElementById('mainTitle');
+  const mainMeta    = document.getElementById('mainMeta');
+  const mainDesc    = document.getElementById('mainDesc');
 
- function updateSummary() {
-  let totalNet = 0;
-  let pendingNet = 0;
+  document.querySelectorAll('.thumb-item').forEach(card => {
+    card.addEventListener('click', () => {
+      const video = card.dataset.video;
+      const title = card.dataset.title;
+      const meta  = card.dataset.meta;
+      const desc  = card.dataset.desc;
+      const thumb = card.dataset.thumb;
 
-  videos.forEach(v => {
-    const gross = v.price * v.buyers;
-    const net   = gross * CREATOR_RATE;
-    totalNet += net;
-    if (v.pending) pendingNet += net;
+      if (mainSource && mainVideo) {
+        mainSource.src = video;
+        mainVideo.load();
+        mainVideo.play().catch(() => {});
+      }
+      if (thumb) {
+        mainVideo.setAttribute('poster', thumb);
+      }
+      if (title) mainTitle.textContent = title;
+      if (meta)  mainMeta.textContent  = meta;
+      if (desc)  mainDesc.textContent  = desc;
+
+      // 모바일에서 위로 스크롤
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
   });
-
-  const monthlyNet = totalNet * 0.15;
-
-  totalNetEl.textContent   = formatMoney(totalNet);
-  monthlyNetEl.textContent = formatMoney(monthlyNet);
-  videoCountEl.textContent = videos.length + '개';
-
-  // ✅ 저번달 금액 고정값
-  pendingNetEl.textContent = "$23,012.00";
-}
-
-
-  // 랜덤 수익 증가 (랜덤초마다[1~15])
-function tickRandomRevenue() {
-  const idx = Math.floor(Math.random() * videos.length);
-  const deltaBuyers = Math.floor(Math.random() * 8) + 1; // 1~8명
-  videos[idx].buyers += deltaBuyers;
-  renderRows();
-  updateSummary();
-
-  // 다음 실행 시간을 1~10초 랜덤 설정
-  const nextTime = Math.floor(Math.random() * 15000) + 1000;
-  setTimeout(tickRandomRevenue, nextTime);
-}
-
-// 최초 실행 트리거
-tickRandomRevenue();
 </script>
 
 </body>
 </html>
-
-
-
-
-
-
-
-
-
